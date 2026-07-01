@@ -22,10 +22,9 @@ float AXP192Component::get_setup_priority() const { return setup_priority::DATA;
 
 void AXP192Component::update() {
 
+    float vbat = GetBatVoltage();
+
     if (this->batterylevel_sensor_ != nullptr) {
-      // To be fixed
-      // This is not giving the right value - mostly there to have some sample sensor...
-      float vbat = GetBatVoltage();
       float batterylevel = 100.0 * ((vbat - 3.0) / (4.1 - 3.0));
 
       ESP_LOGD(TAG, "Got Battery Level=%f (%f)", batterylevel, vbat);
@@ -33,6 +32,18 @@ void AXP192Component::update() {
         batterylevel = 100;
       }
       this->batterylevel_sensor_->publish_state(batterylevel);
+    }
+
+    if (this->batteryvoltage_sensor_ != nullptr) {
+      this->batteryvoltage_sensor_->publish_state(vbat);
+    }
+
+    // VBUS voltage: ~5V when USB/mains power is connected, ~0V when unplugged.
+    // Used as the true "power present" signal for the power line monitor.
+    if (this->vbusvoltage_sensor_ != nullptr) {
+      float vbus = GetVBusVoltage();
+      ESP_LOGD(TAG, "Got VBUS Voltage=%f", vbus);
+      this->vbusvoltage_sensor_->publish_state(vbus);
     }
 
     UpdateBrightness();

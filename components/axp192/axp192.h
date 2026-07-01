@@ -25,6 +25,8 @@ namespace axp192 {
 class AXP192Component : public PollingComponent, public i2c::I2CDevice {
 public:
   void set_batterylevel_sensor(sensor::Sensor *batterylevel_sensor) { batterylevel_sensor_ = batterylevel_sensor; }
+  void set_batteryvoltage_sensor(sensor::Sensor *batteryvoltage_sensor) { batteryvoltage_sensor_ = batteryvoltage_sensor; }
+  void set_vbusvoltage_sensor(sensor::Sensor *vbusvoltage_sensor) { vbusvoltage_sensor_ = vbusvoltage_sensor; }
   void set_brightness(float brightness) { brightness_ = brightness; }
 
   // ========== INTERNAL METHODS ==========
@@ -35,7 +37,9 @@ public:
   void update() override;
 
 protected:
-    sensor::Sensor *batterylevel_sensor_;
+    sensor::Sensor *batterylevel_sensor_{nullptr};
+    sensor::Sensor *batteryvoltage_sensor_{nullptr};
+    sensor::Sensor *vbusvoltage_sensor_{nullptr};
     float brightness_{1.0f};
     float curr_brightness_{-1.0f};
 
